@@ -1,16 +1,11 @@
 package tfar.howdoyoufeel;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
-import com.mojang.math.Axis;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.MobEffectTextureManager;
-import net.minecraft.client.resources.model.AtlasSet;
 import net.minecraft.world.effect.MobEffect;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.entity.Entity;
@@ -35,13 +30,15 @@ public class ClientPacketHandler {
 
     public static void onRender(LivingEntity entity, PoseStack poseStack, MultiBufferSource multiBufferSource) {
         Set<MobEffect> effectSet = entity.getActiveEffectsMap().keySet();
-        if (!effectSet.isEmpty()) {
-            renderEffect(entity,effectSet.iterator().next(), poseStack, multiBufferSource);
+        int index = 0;
+        for (MobEffect effect : effectSet) {
+            renderEffect(entity,effect, poseStack, multiBufferSource,index,effectSet.size());
+            index++;
         }
     }
 
-    private static void renderEffect(LivingEntity entity,MobEffect icon, PoseStack poseStack,
-                                     MultiBufferSource buffers) {
+    private static void renderEffect(LivingEntity entity, MobEffect icon, PoseStack poseStack,
+                                     MultiBufferSource buffers, int index, int size) {
         poseStack.pushPose();
         poseStack.translate(0,entity.getNameTagOffsetY() + .25, 0);
 
@@ -55,8 +52,6 @@ public class ClientPacketHandler {
         TextureAtlasSprite textureatlassprite = mobeffecttexturemanager.get(icon);
 
         Matrix4f matrix4f = poseStack.last().pose();
-        RenderSystem.setShaderTexture(0, textureatlassprite.atlasLocation());
-        RenderSystem.setShader(GameRenderer::getPositionTexShader);
 
         float u0 = textureatlassprite.getU0();
         float u1 = textureatlassprite.getU1();
@@ -65,12 +60,14 @@ public class ClientPacketHandler {
 
         VertexConsumer vertexconsumer = buffers.getBuffer(CustomRenderType.TYPE);
 
+        float xOffset = index-size/2f + .5f;
+
         float b = -.5f;
 
-        vertexconsumer.vertex(matrix4f, 0.5f,0.5f+b, 0).uv(u0,v0).endVertex();
-        vertexconsumer.vertex(matrix4f, 0.5f, -0.5f+b, 0).uv(u0,v1).endVertex();
-        vertexconsumer.vertex(matrix4f, -0.5f, -0.5f+b, 0).uv(u1,v1).endVertex();
-        vertexconsumer.vertex(matrix4f, -0.5f, 0.5f+b, 0).uv(u1,v0).endVertex();
+        vertexconsumer.vertex(matrix4f, 0.5f+xOffset,0.5f+b, 0).uv(u0,v0).endVertex();
+        vertexconsumer.vertex(matrix4f, 0.5f+xOffset, -0.5f+b, 0).uv(u0,v1).endVertex();
+        vertexconsumer.vertex(matrix4f, -0.5f+xOffset, -0.5f+b, 0).uv(u1,v1).endVertex();
+        vertexconsumer.vertex(matrix4f, -0.5f+xOffset, 0.5f+b, 0).uv(u1,v0).endVertex();
 
         poseStack.popPose();
     }

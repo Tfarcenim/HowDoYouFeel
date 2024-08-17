@@ -23,7 +23,7 @@ public class CustomRenderType extends RenderType {
         RenderType.CompositeState renderTypeState = RenderType.CompositeState.builder()
                 .setShaderState(RenderStateShard.POSITION_TEX_SHADER)
                 .setTransparencyState(TRANSLUCENT_TRANSPARENCY)
-                .setTextureState(new RenderStateShard.TextureStateShard(MOB_EFFECT_ATLAS, true, false))
+                .setTextureState(new RenderStateShard.TextureStateShard(MOB_EFFECT_ATLAS, false, false))
                 .setDepthTestState(RenderStateShard.LEQUAL_DEPTH_TEST)
                 .createCompositeState(false);
         return RenderType.create("mob_effects", DefaultVertexFormat.POSITION_TEX, VertexFormat.Mode.QUADS, 256, true, true, renderTypeState);
