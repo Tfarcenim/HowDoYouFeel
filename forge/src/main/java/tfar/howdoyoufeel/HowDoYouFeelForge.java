@@ -1,5 +1,6 @@
 package tfar.howdoyoufeel;
 
+import net.minecraftforge.event.entity.living.MobEffectEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod(HowDoYouFeel.MOD_ID)
@@ -13,6 +14,6 @@ public class HowDoYouFeelForge {
     
         // Use Forge to bootstrap the Common mod.
         HowDoYouFeel.init();
-        
     }
+
 }
