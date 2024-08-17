@@ -35,6 +35,7 @@ public class S2CUpdateEffectsPacket implements S2CModPacket {
 
     @Override
     public void write(FriendlyByteBuf to) {
+        to.writeInt(activeEffects.size());
         for (MobEffect effect : activeEffects) {
             to.writeId(BuiltInRegistries.MOB_EFFECT,effect);
         }
